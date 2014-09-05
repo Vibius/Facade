@@ -49,7 +49,6 @@ class AliasManager{
      */
     public function registerAliasDeleter(){
         if( \Config::getParameter('deleteAliases', 'config') ){
-            echo "deleting aliases";
             $aliasManager = $this;
             register_shutdown_function(function() use($aliasManager){
                 $aliasManager->deleteAllAliases();
