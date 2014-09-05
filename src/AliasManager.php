@@ -45,6 +45,19 @@ class AliasManager{
     }
 
     /**
+     * 
+     */
+    public function registerAliasDeleter(){
+        if( \Config::getParameter('deleteAliases', 'config') ){
+            echo "deleting aliases";
+            $aliasManager = $this;
+            register_shutdown_function(function() use($aliasManager){
+                $aliasManager->deleteAllAliases();
+            });
+        }
+    }
+
+    /**
      * This method is used to check if folder of alias cache is valid (exists, readable, writeable).
      * @throws Exception When alias cache is not valid folder.
      */
