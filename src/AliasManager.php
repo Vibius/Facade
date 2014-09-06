@@ -22,7 +22,10 @@ class AliasManager{
     private $aliases = [];
 
 
-    function __construct(){
+    function __construct($aliasCache = false){
+        if( $aliasCache ){
+            $this->aliasCache = $aliasCache;
+        }
         $this->verifyAliasCache();
         $this->path = dirname(__FILE__).'/';
     }
@@ -61,7 +64,7 @@ class AliasManager{
      * @throws Exception When alias cache is not valid folder.
      */
     public function verifyAliasCache(){
-        if( !file_exists(BASEPATH.$this->aliasCache) || !is_readable(BASEPATH.$this->aliasCache) || !is_writable(BASEPATH.$this->aliasCache)){
+        if( !file_exists(vibius_BASEPATH.$this->aliasCache) || !is_readable(vibius_BASEPATH.$this->aliasCache) || !is_writable(vibius_BASEPATH.$this->aliasCache)){
             throw new Exception('Alias folder does not exist or readable & writeable');
         }
     }
@@ -77,7 +80,7 @@ class AliasManager{
             return true;
         }
 
-        $aliasPath = BASEPATH.$this->aliasCache.$name.".php";
+        $aliasPath = vibius_BASEPATH.$this->aliasCache.$name.".php";
         if( file_exists($aliasPath) ){
             $this->aliases[$name] = true;
             return true;
@@ -89,7 +92,7 @@ class AliasManager{
      * @param string $class Name of the alias to be loaded
      */
     public function loadAlias($class){
-            require_once(BASEPATH.$this->aliasCache.$class.'.php');
+            require_once(vibius_BASEPATH.$this->aliasCache.$class.'.php');
     }
 
     /**
@@ -97,7 +100,7 @@ class AliasManager{
      * @param string $class Name of the alias to be deleted
      */
     public function deleteAlias($class){
-            unlink(BASEPATH.$this->aliasCache.$class.'.php');
+            unlink(vibius_BASEPATH.$this->aliasCache.$class.'.php');
     }
 
     /**
@@ -121,7 +124,7 @@ class AliasManager{
             return $result;
         }
 
-        $psr4 = require BASEPATH.'vendor/composer/autoload_psr4.php';
+        $psr4 = require vibius_BASEPATH.'vendor/composer/autoload_psr4.php';
         $manifestResolver = new ManifestResolver($psr4);
 
         $manifestResolver->findManifests();
@@ -158,7 +161,7 @@ class AliasManager{
      * @param string $config Configuration array of created alias
      */
     public function createAlias($name, $config){
-        $handle = fopen(BASEPATH.$this->aliasCache.$name.'.php','w+');
+        $handle = fopen(vibius_BASEPATH.$this->aliasCache.$name.'.php','w+');
         if(!$handle){
             throw new Exception('Unable to create alias, fopen not successful');
         }
@@ -172,19 +175,15 @@ class AliasManager{
         return true;
     }
 
-    public function Hi(){
-        echo "hi!";
-    }
-
     public function findAllAliases(){
-        $aliases  = glob(BASEPATH.$this->aliasCache.'*'); 
+        $aliases  = glob(vibius_BASEPATH.$this->aliasCache.'*'); 
         return $aliases;
     }
 
     public function deleteAllAliases(){
         $aliases = $this->findAllAliases();
         foreach ($aliases as $alias) {
-            $this->deleteAlias(explode('.php', explode(BASEPATH.$this->aliasCache,$alias)[1])[0]);
+            $this->deleteAlias(explode('.php', explode(vibius_BASEPATH.$this->aliasCache,$alias)[1])[0]);
         }
     }
 
