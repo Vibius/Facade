@@ -16,11 +16,4 @@ Require the component with ``composer``, it will autoinstall rest of the compone
 Install the ``Facade`` component by running
 ``composer install``
 
-Require composer autoloader to your file:
 
-```php
-<?php
-require 'vendor/autoload.php';
-```
-
-To find out more please reffer to the Wiki.
