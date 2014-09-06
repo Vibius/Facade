@@ -11,20 +11,17 @@ class Facade{
      * Method used to handle static calls to aliasies.
      */
     public static function __callStatic($method, $parameters){
-        $container = Container::open('instances');
-        $aliases = Container::open('aliases');
+        $container = Container::open('aliases');
 
         $class = get_called_class();
         $class = strtolower($class);
-        if( !$container->exists($class) && !$aliases->exists($class)){
+        if( !$container->exists($class)){
             $newClass = $class::getFacadeIdentifier();
             $container->add($class, $newClass); 
         }
 
         
-        if( $aliases->exists($class) ){
-            $instance = $aliases->get($class);
-        }else{
+        if( $container->exists($class) ){
             $instance = $container->get($class);
         }
 
