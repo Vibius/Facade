@@ -17,3 +17,4 @@ Install the ``Facade`` component by running
 ``composer install``
 
 
+For more information please reffer to the [Wiki](https://github.com/Vibius/Facade/wiki)
