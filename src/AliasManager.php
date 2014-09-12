@@ -124,12 +124,16 @@ class AliasManager{
             return $result;
         }
 
-        $psr4 = require vibius_BASEPATH.'vendor/composer/autoload_psr4.php';
-        $manifestResolver = new ManifestResolver($psr4);
+        if( !isset($this->manifestResolver) ){
+            $psr4 = require vibius_BASEPATH.'vendor/composer/autoload_psr4.php';
+            $manifestResolver = new ManifestResolver($psr4);
+            $this->manifestResolver = $manifestResolver;
+        }
 
+        $manifestResolver = $this->manifestResolver;
         $manifestResolver->findManifests();
-
-        foreach ($manifestResolver->manifests as $manifest => $manifestSrc) {
+        
+        foreach ($manifestResolver->manifests as $manifestName => $manifestSrc) {
             $manifest = $manifestResolver->getManifest($manifestSrc);
             $manifestData = $manifestResolver->verifyManifest($manifest);
             //debug here
