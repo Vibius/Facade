@@ -25,15 +25,11 @@ class Facade{
             $instance = $container->get($class);
         }
 
-        return self::execute($class, $instance, $method, $parameters);
-
-    }
-
-    public static function execute($class, $instance, $method, $parameters){
         if( !method_exists($instance, $method) ){
             throw new Exception(" Method ($method) of class ($class) does not exist");
         }
         return call_user_func_array(array($instance, $method), $parameters);
     }
+
 
 }
