@@ -22,10 +22,14 @@ class AliasManager{
     private $aliases = [];
 
 
-    function __construct($aliasCache = false){
+    function __construct($aliasCache = false, $config = false){
+        
         if( $aliasCache ){
             $this->aliasCache = $aliasCache;
         }
+
+        $this->config = $config;
+
         $this->verifyAliasCache();
         $this->path = dirname(__FILE__).'/';
     }
@@ -51,7 +55,12 @@ class AliasManager{
      * 
      */
     public function registerAliasDeleter(){
-        if( \Config::getParameter('deleteAliases', 'config') ){
+
+        if( !$this->config ){
+            $this->config = \Config::getConfig('config');
+        }
+
+        if( $this->config['deleteAliases'] ){
             $aliasManager = $this;
             register_shutdown_function(function() use($aliasManager){
                 $aliasManager->deleteAllAliases();
@@ -128,24 +137,28 @@ class AliasManager{
             $psr4 = require vibius_BASEPATH.'vendor/composer/autoload_psr4.php';
             $manifestResolver = new ManifestResolver($psr4);
             $this->manifestResolver = $manifestResolver;
+            $manifestResolver->findManifests();
         }
 
         $manifestResolver = $this->manifestResolver;
-        $manifestResolver->findManifests();
-        
+
         foreach ($manifestResolver->manifests as $manifestName => $manifestSrc) {
             $manifest = $manifestResolver->getManifest($manifestSrc);
-            $manifestData = $manifestResolver->verifyManifest($manifest);
-            //debug here
-            foreach ($manifestData['components'] as $component => $componentConfig) {
-                if( $manifestResolver->verifyComponent($componentConfig) ){
-                    if( $class === $componentConfig['alias'] ){
-                        $componentSrc = explode('../manifest.php',$manifestSrc)[0];
-                        $result = $this->createAlias($class, $componentConfig);
-                        return $result;
+
+            if( $manifestData = $manifestResolver->verifyManifest($manifest) ){
+
+                foreach ($manifestData['components'] as $component => $componentConfig) {
+                    if( $manifestResolver->verifyComponent($componentConfig) ){
+                        if( $class === $componentConfig['alias'] ){
+                            $componentSrc = explode('../manifest.php',$manifestSrc)[0];
+                            $result = $this->createAlias($class, $componentConfig);
+                            return $result;
+                        }
                     }
                 }
+
             }
+            
         }
     }
 
