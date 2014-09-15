@@ -1,7 +1,7 @@
 <?php
 
 namespace Vibius\Facade;
-use Exception;
+use Exception, Config;
 use Vibius\Container\Container as Container;
 
 /**
@@ -57,10 +57,10 @@ class AliasManager{
     public function registerAliasDeleter(){
 
         if( !$this->config ){
-            $this->config = \Config::getConfig('config');
+            $this->config = Config::get('config');
         }
 
-        if( $this->config['deleteAliases'] ){
+        if( $this->config->get('deleteAliases') ){
             $aliasManager = $this;
             register_shutdown_function(function() use($aliasManager){
                 $aliasManager->deleteAllAliases();
